@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: test-thread-web
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      config:
+        server-addr: 127.0.0.1:8848
+        group: DEFAULT_GROUP
+server:
+  port: 8080
+
+
+threadpool:
+      store:
+        redis:
+          index: 0
+          port: 6379
+          host:  127.0.0.1
+          des: local-redis
+          time-out: 5000
+          max-idle: 100
+          max-wait-millis: 3000
+          min-idle: 1
+          lock:
+             user: true
