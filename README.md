@@ -6,33 +6,95 @@
 #### 软件架构
 监控平台架构图如下所示：
 
+![监控平台架构图](image.png)
 
 
 #### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.部署一个用于存储线程池数据的redis服务。
+2.部署一个用于动态管理线程池配置的nacos服务。
+3.修改业务服务的配置，加入下边案例模版1-1类型配置。
+4.修改监控平台的配置，加入下边案例模版1-2类型配置。
+5.启动业务服务，将线程池数据上报到redis中。
+6.启动监控平台，从redis中拉取线程池数据。
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  动态线程池配置模版（1-1类型）
 
-#### 参与贡献
+```
+//告警邮件地址
+dynamic.threadpools.alarmEmails=test@qq.com
+//线程池基础属性的配置
+dynamic.threadpools.executors.testExecutor.corePoolSize=16
+dynamic.threadpools.executors.testExecutor.maximumPoolSize=16
+dynamic.threadpools.executors.testExecutor.keepAliveTime=3000
+dynamic.threadpools.executors.testExecutor.queueCapacity=100
+dynamic.threadpools.executors.testExecutor.rejectedExecutionType=commonReject
+//任务队列堆积达到该阈值，则触发报警
+dynamic.threadpools.executors.testExecutor.taskCountScoreThreshold=0.5
+dynamic.threadpools.executors.testExecutor.preStartAllCoreThreads=true
+dynamic.threadpools.executors.testExecutor.preStartCoreThread=true
+dynamic.threadpools.executors.testExecutor.allowsCoreThreadTimeOut=5000
+dynamic.threadpools.executors.testExecutor.alarmStatus=true
+dynamic.threadpools.executors.testExecutor.maxTagRecordSize=5000
+dynamic.threadpools.executors.testExecutor.watcher=true
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+
+dynamic.threadpools.executors.commonExecutor.corePoolSize=4
+dynamic.threadpools.executors.commonExecutor.maximumPoolSize=15
+dynamic.threadpools.executors.commonExecutor.keepAliveTime=3000
+dynamic.threadpools.executors.commonExecutor.queueCapacity=11
+dynamic.threadpools.executors.commonExecutor.rejectedExecutionType=commonReject
+dynamic.threadpools.executors.commonExecutor.taskCountScoreThreshold=0.9
+dynamic.threadpools.executors.commonExecutor.preStartAllCoreThreads=true
+dynamic.threadpools.executors.commonExecutor.preStartCoreThread=true
+dynamic.threadpools.executors.commonExecutor.allowsCoreThreadTimeOut=3000
+dynamic.threadpools.executors.commonExecutor.alarmStatus=true
+dynamic.threadpools.executors.commonExecutor.maxTagRecordSize=5000
+dynamic.threadpools.executors.commonExecutor.watcher=true
 
 
-#### 特技
+#缓存模块的配置 用于记录线程池属性需要上传到的服务器位置
+cache.redis.index=0
+cache.redis.des=local-redis
+cache.redis.host=127.0.0.1
+cache.redis.port=6379
+cache.redis.time-out=5000
+cache.redis.max-idle=100
+cache.redis.max-wait-millis=3000
+cache.redis.min-idle=1
+cache.redis.lock.user=true
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+```
+
+2.修改线程池监控平台配置（1-2类型）
+
+```
+//线程池监控拉取数据的redis服务地址
+threadpool.store.redis.index=0
+threadpool.store.redis.des=local-redis
+threadpool.store.redis.host=127.0.0.1
+threadpool.store.redis.port=6379
+threadpool.store.redis.time-out=5000
+threadpool.store.redis.max-idle=100
+threadpool.store.redis.max-wait-millis=3000
+threadpool.store.redis.min-idle=1
+threadpool.store.redis.lock.user=true
+
+//线程池监控管理的服务名称，多个服务的话可以用逗号分隔
+threadpool.application.name.list=order-application,goods-application,user-application
+//管理台账号密码
+console.admin.username=root
+console.admin.password=123456
+
+```
+
+
+
+
+
+
+
+
+
+
